@@ -1,43 +1,18 @@
-const axios = require("axios");
-const ds = require("./docusign");
-const getJwt = ds.getJwt;
+const app = require("express")();
+const bodyParser = require("body-parser");
+const docusign = require("./controllers");
 
-const accountId = "d2dd0579-c4fd-4d12-b419-2b573cbefe5f";
-const templateId = "6fa8b0d3-a8e7-4bad-ab58-6ae058fdb1aa";
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
-async function getTemplateDetails() {
-  try {
-    // get consent code
-    let accessTkn = await getJwt();
-    let accessToken = accessTkn.accessToken;
+const port = process.env.PORT || 3000;
 
-    const response = await axios.get(
-      `https://demo.docusign.net/restapi/v2.1/accounts/${accountId}/templates/${templateId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
+app.get("/", (req, res) => {
+  res.send("docusign server");
+});
 
-    let args = {
-      templateId: templateId,
-      signerEmail: "contactdeveshanand@gmail.com",
-      signerName: "Devesh Anand",
-      ccEmail: "itsdeveshanand@gmail.com",
-      ccName: "Devesh Anand",
-    };
+app.post("/docusign", docusign);
 
-    let resultsArgs = {
-      envelopeArgs: args,
-      accessToken: accessToken,
-      accountId: accountId,
-    };
-    let results = await ds.sendEnvelopeFromTemplate(resultsArgs);
-    console.log(results);
-  } catch (error) {
-    console.error("Error: ", error);
-  }
-}
-
-getTemplateDetails();
+app.listen(port, () => {
+  console.log(`Example app listening at http://localhost:${port}`);
+});
