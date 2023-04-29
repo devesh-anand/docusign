@@ -35,7 +35,11 @@ async function getTemplateDetails(email, name, ccEmail, ccName) {
       accountId: accountId,
     };
     let results = await ds.sendEnvelopeFromTemplate(resultsArgs);
-    return results;
+    let data = {
+      results: results,
+      templateDetails: response.data,
+    };
+    return data;
   } catch (error) {
     console.error("Error: ");
   }
