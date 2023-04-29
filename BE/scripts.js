@@ -42,6 +42,7 @@ async function getTemplateDetails(email, name, ccEmail, ccName) {
     return data;
   } catch (error) {
     console.error("Error: ");
+    throw new Error(error);
   }
 }
 
